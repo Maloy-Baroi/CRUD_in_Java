@@ -6,7 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @SpringBootApplication
 @RestController
@@ -28,15 +31,27 @@ public class TodoWebappApplication {
 //            String Name,
 //    ) {}
 
-    @GetMapping("/get-all/")
-    public List<UserModel> getUsers() {
+    @GetMapping("/get/all/")
+    public List<UserModel> getAllUsers() {
         return userRepository.findAll();
-//        return List.of();
+    }
+
+    @GetMapping("/get/{id}")
+    public Optional<UserModel> getUser(@PathVariable Long id) {
+        return userRepository.findById(Math.toIntExact(id));
     }
 
     @PostMapping("/post/")
     public UserModel createUser(@Valid @RequestBody UserModel user) {
 //        System.out.println(user);
         return userRepository.save(user);
+    }
+
+    @DeleteMapping("/delete/{id}/")
+    public Map<String, String> deleteUser(@PathVariable Long id) {
+        userRepository.deleteById(Math.toIntExact(id));
+        Map<String, String> returnValue = new HashMap<>();
+        returnValue.put("status", "User with id: "+ id + " has been deleted");
+        return returnValue;
     }
 }
